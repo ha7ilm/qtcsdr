@@ -2,6 +2,8 @@
 
 This will be once a Qt-based GUI for *csdr*.
 
+![qtcsdr](/screenshot.png?raw=true)
+
 Requirements:
 
 * Qt5
