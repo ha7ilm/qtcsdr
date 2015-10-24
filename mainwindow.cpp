@@ -7,19 +7,20 @@
 #include <signal.h>
 
 #define CMD_IQSERVER "rtl_tcp -s 2400000 -p 4950 -f 89500000"
-#define CMD_DISTRIB "pgroup -9 bash -c \"ncat localhost 4950 | ncat -4l 4951 -k --send-only --allow 127.0.0.1\""
-#define CMD_MOD_WFM "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING  | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_MOD_NFM "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr fmdemod_quadri_cf | csdr limit_ff | csdr deemphasis_nfm_ff 48000 | csdr fastagc_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_MOD_AM  "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr amdemod_cf | csdr fastdcblock_ff | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_MOD_USB "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr bandpass_fir_fft_cc 0 0.1 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_MOD_LSB "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr bandpass_fir_fft_cc -0.1 0 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_DISTRIB "pgroup -9 bash -c \"sleep .5; ncat localhost 4950 | ncat -vv -4l 4951 -k --send-only --allow 127.0.0.1\""
+#define CMD_MOD_WFM "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING  | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_MOD_NFM "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr fmdemod_quadri_cf | csdr limit_ff | csdr deemphasis_nfm_ff 48000 | csdr fastagc_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_MOD_AM  "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr amdemod_cf | csdr fastdcblock_ff | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_MOD_USB "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr bandpass_fir_fft_cc 0 0.1 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_MOD_LSB "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr bandpass_fir_fft_cc -0.1 0 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_FFT     "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr fft_cc 2048 240000 | csdr logpower_cf -70 | csdr fft_exchange_sides_ff 2048\""
 
 //#define CMD_WFM "pgroup -9 bash -c \"rtl_tcp -s 2400000 -p 4951 -f 89500000 & (sleep 1; nc localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 768 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -)\""
 
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow), qStdOut(stdout)
 {
     ui->setupUi(this);
 
@@ -29,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     modsButtons.append(ui->toggleLSB);
     modsButtons.append(ui->toggleUSB);
     connect(&tmrRead, SIGNAL(timeout()), this, SLOT(tmrRead_timeout()));
-    tmrRead.start(100);
+    tmrRead.start(10);
 }
 
 void MainWindow::untoggleOtherModButtonsThan(QPushButton* pb)
@@ -49,10 +50,29 @@ void MainWindow::untoggleOtherModButtonsThan(QPushButton* pb)
     }
 }
 
+void MainWindow::redirectProcessOutput(QProcess &proc, bool onlyStdErr)
+{
+    if(proc.pid()!=0)
+    {
+        QString temp = ((onlyStdErr)?"":proc.readAllStandardOutput()) + proc.readAllStandardError();
+        if(temp.length()) qStdOut << temp;
+    }
+    qStdOut.flush();
+}
+
 void MainWindow::tmrRead_timeout()
 {
-    QString temp = procDemod.readAll();
-    if(temp.length()) qDebug() << temp;
+    redirectProcessOutput(procDemod);
+    redirectProcessOutput(procDistrib);
+    redirectProcessOutput(procIQServer);
+    redirectProcessOutput(procFFT, true);
+
+    if(procFFT.pid()!=0)
+    {
+        FFTDataBuffer += procFFT.readAll();
+        while(ui->widgetFFT->takeOneWaterfallLine(&FFTDataBuffer));
+    }
+
 }
 
 MainWindow::~MainWindow()
@@ -74,6 +94,7 @@ QString MainWindow::getDemodulatorCommand()
     if(ui->toggleAM->isChecked())  return QString(CMD_MOD_AM);
     if(ui->toggleLSB->isChecked()) return QString(CMD_MOD_LSB);
     if(ui->toggleUSB->isChecked()) return QString(CMD_MOD_USB);
+    return QString(); //We should not get here.
 }
 
 void MainWindow::on_toggleRun_toggled(bool checked)
@@ -87,7 +108,8 @@ void MainWindow::on_toggleRun_toggled(bool checked)
         procDistrib.start(CMD_DISTRIB);
         procDistrib.waitForStarted(1000);
         procDemod.start(getDemodulatorCommand());
-        on_spinFreq_valueChanged();
+        procFFT.start(CMD_FFT);
+        on_spinFreq_valueChanged(ui->spinFreq->value());
     }
     else
     {
@@ -111,8 +133,7 @@ void MainWindow::sendCommand(unsigned char cmd_num, unsigned value)
 
 
 
-
-void MainWindow::on_spinFreq_valueChanged()
+void MainWindow::on_spinFreq_valueChanged(int val)
 {
     sendCommand(RTLTCP_SET_FREQ, ui->spinFreq->value()-ui->spinOffset->value());
     //procDemod.write("\x01\x05\x55\xa9\x60");

@@ -200,7 +200,7 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="widgetFFT" native="true">
+   <widget class="QMySpectrumWidget" name="widgetFFT" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -213,6 +213,14 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QMySpectrumWidget</class>
+   <extends>QWidget</extends>
+   <header>qmyspectrumwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

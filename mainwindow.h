@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QProcess>
 #include <QTimer>
+#include <QTextStream>
 
 #define RTLTCP_SET_FREQ 0x1
 
@@ -27,7 +28,7 @@ private slots:
     void on_toggleUSB_toggled(bool checked);
     void on_toggleLSB_toggled(bool checked);
     void on_toggleRun_toggled(bool checked);
-    void on_spinFreq_valueChanged();
+    void on_spinFreq_valueChanged(int val);
     void tmrRead_timeout();
 
 private:
@@ -36,11 +37,16 @@ private:
     void untoggleOtherModButtonsThan(QPushButton* pb);
     void sendCommand(unsigned char cmd_num, unsigned value);
     QString getDemodulatorCommand();
+    void redirectProcessOutput(QProcess &proc, bool onlyStdErr = false);
     QProcess procDemod;
     QProcess procDistrib;
     QProcess procIQServer;
+    QProcess procFFT;
     QString fifoPipe;
     QTimer tmrRead;
+    QTextStream qStdOut;
+    QByteArray FFTDataBuffer;
+
 
 };
 
