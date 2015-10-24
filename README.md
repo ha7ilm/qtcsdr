@@ -11,4 +11,4 @@ Requirements:
 * <a href="https://github.com/simonyiszk/csdr">csdr</a>
 * <a href="https://github.com/ha7ilm/pgroup">pgroup</a>
 * ncat from the *nmap* package
-
+* mplayer
