@@ -14,6 +14,10 @@ public:
     QImage* spectrumImage;
     int FFTSize = 2048;
     bool takeOneWaterfallLine(QByteArray* from);
+    int sampleRate = 2400000;
+    int offsetFreq = 0;
+    int filterLowCut = 0;
+    int filterHighCut = 0;
 private:
     void reinit();
     virtual void paintEvent(QPaintEvent*);

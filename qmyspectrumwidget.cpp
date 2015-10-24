@@ -18,8 +18,14 @@ void QMySpectrumWidget::reinit()
 void QMySpectrumWidget::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);
-    p.drawImage(0,0,*(spectrumImage),0,0,this->width());
+    QImage scaledImage = spectrumImage->scaled(this->width(),this->height(),Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    p.drawImage(0,0,scaledImage);
 
+    int halfWidth = this->width()/2;
+    int rectX = halfWidth+((float)(this->offsetFreq+this->filterLowCut)/this->sampleRate)*halfWidth;
+    int rectW = ((float)(this->filterHighCut-this->filterLowCut)/this->sampleRate)*this->width();
+    //qDebug() << "pe" << rectX << rectW;
+    p.fillRect(rectX,0,rectW,this->height(),QColor::fromRgbF(1,1,1,0.3));
 }
 
 void QMySpectrumWidget::resizeEvent(QResizeEvent* event)

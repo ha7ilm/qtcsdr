@@ -38,6 +38,7 @@ private:
     void sendCommand(unsigned char cmd_num, unsigned value);
     QString getDemodulatorCommand();
     void redirectProcessOutput(QProcess &proc, bool onlyStdErr = false);
+    void updateFilterBw();
     QProcess procDemod;
     QProcess procDistrib;
     QProcess procIQServer;

@@ -48,6 +48,8 @@ void MainWindow::untoggleOtherModButtonsThan(QPushButton* pb)
         procDemod.waitForFinished(1000);
         procDemod.start(getDemodulatorCommand());
     }
+
+    updateFilterBw();
 }
 
 void MainWindow::redirectProcessOutput(QProcess &proc, bool onlyStdErr)
@@ -97,6 +99,16 @@ QString MainWindow::getDemodulatorCommand()
     return QString(); //We should not get here.
 }
 
+void MainWindow::updateFilterBw()
+{
+    ui->widgetFFT->offsetFreq = ui->spinOffset->value();
+    if(ui->toggleWFM->isChecked()) { ui->widgetFFT->filterLowCut=-70000; ui->widgetFFT->filterHighCut=70000; }
+    if(ui->toggleNFM->isChecked()) { ui->widgetFFT->filterLowCut=-4000; ui->widgetFFT->filterHighCut=4000; }
+    if(ui->toggleAM->isChecked())  { ui->widgetFFT->filterLowCut=-4000; ui->widgetFFT->filterHighCut=4000; }
+    if(ui->toggleLSB->isChecked()) { ui->widgetFFT->filterLowCut=-4000; ui->widgetFFT->filterHighCut=0; }
+    if(ui->toggleUSB->isChecked()) { ui->widgetFFT->filterLowCut=0; ui->widgetFFT->filterHighCut=4000; }
+}
+
 void MainWindow::on_toggleRun_toggled(bool checked)
 {
     if(checked)
@@ -110,6 +122,7 @@ void MainWindow::on_toggleRun_toggled(bool checked)
         procDemod.start(getDemodulatorCommand());
         procFFT.start(CMD_FFT);
         on_spinFreq_valueChanged(ui->spinFreq->value());
+        updateFilterBw();
     }
     else
     {
