@@ -6,12 +6,15 @@
 #include <sys/types.h>
 #include <signal.h>
 
-//#define CMD_RTLTCP "rtl_tcp -s 2400000 -p 4950 -f 89500000"
-//#define CMD_DISTRIB "bash -c \"ncat localhost 4950 | ncat -4l 4951 -k --send-only --allow 127.0.0.1\""
-//#define CMD_WFM "bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-//#define CMD_NFM "bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr fmdemod_quadri_cf | csdr limit_ff | csdr deemphasis_nfm_ff 48000 | csdr fastagc_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_IQSERVER "rtl_tcp -s 2400000 -p 4950 -f 89500000"
+#define CMD_DISTRIB "pgroup -9 bash -c \"ncat localhost 4950 | ncat -4l 4951 -k --send-only --allow 127.0.0.1\""
+#define CMD_MOD_WFM "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING  | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_MOD_NFM "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr fmdemod_quadri_cf | csdr limit_ff | csdr deemphasis_nfm_ff 48000 | csdr fastagc_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_MOD_AM  "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr amdemod_cf | csdr fastdcblock_ff | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_MOD_USB "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr bandpass_fir_fft_cc 0 0.1 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
+#define CMD_MOD_LSB "pgroup -9 bash -c \"ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr bandpass_fir_fft_cc -0.1 0 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
 
-#define CMD_WFM "pgroup -9 bash -c \"rtl_tcp -s 2400000 -p 4951 -f 89500000 & (sleep 1; nc localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 768 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -)\""
+//#define CMD_WFM "pgroup -9 bash -c \"rtl_tcp -s 2400000 -p 4951 -f 89500000 & (sleep 1; nc localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 768 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -)\""
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -36,6 +39,14 @@ void MainWindow::untoggleOtherModButtonsThan(QPushButton* pb)
     protect = true;
     foreach(QPushButton* ipb, modsButtons) if(ipb!=pb) ipb->setChecked(false); else pb->setChecked(true);
     protect = false;
+
+    //we select the new demodulator
+    if(ui->toggleRun->isChecked())
+    {
+        if(procDemod.pid()) kill(procDemod.pid(), SIGTERM);
+        procDemod.waitForFinished(1000);
+        procDemod.start(getDemodulatorCommand());
+    }
 }
 
 void MainWindow::tmrRead_timeout()
@@ -46,6 +57,7 @@ void MainWindow::tmrRead_timeout()
 
 MainWindow::~MainWindow()
 {
+    if(ui->toggleRun->isChecked()) on_toggleRun_toggled(false); //so that we kill all subprocesses
     delete ui;
 }
 
@@ -55,20 +67,33 @@ void MainWindow::on_toggleAM_toggled(bool checked)  { untoggleOtherModButtonsTha
 void MainWindow::on_toggleUSB_toggled(bool checked) { untoggleOtherModButtonsThan(ui->toggleUSB); }
 void MainWindow::on_toggleLSB_toggled(bool checked) { untoggleOtherModButtonsThan(ui->toggleLSB); }
 
+QString MainWindow::getDemodulatorCommand()
+{
+    if(ui->toggleWFM->isChecked()) return QString(CMD_MOD_WFM);
+    if(ui->toggleNFM->isChecked()) return QString(CMD_MOD_NFM);
+    if(ui->toggleAM->isChecked())  return QString(CMD_MOD_AM);
+    if(ui->toggleLSB->isChecked()) return QString(CMD_MOD_LSB);
+    if(ui->toggleUSB->isChecked()) return QString(CMD_MOD_USB);
+}
+
 void MainWindow::on_toggleRun_toggled(bool checked)
 {
     if(checked)
     {
         fifoPipe = QString("/tmp/qtcsdr_shift_pipe_")+QString::number(rand());
         mkfifo(fifoPipe.toStdString().c_str(), 0600);
-        procDemod.start(CMD_WFM);
-        procDemod.waitForStarted(1000);
+        procIQServer.start(CMD_IQSERVER);
+        procIQServer.waitForStarted(1000);
+        procDistrib.start(CMD_DISTRIB);
+        procDistrib.waitForStarted(1000);
+        procDemod.start(getDemodulatorCommand());
         on_spinFreq_valueChanged();
-
     }
     else
     {
-        kill(procDemod.pid(), SIGTERM);
+        if(procDemod.pid()!=0)    kill(procDemod.pid(), SIGTERM);
+        if(procDistrib.pid()!=0)  kill(procDistrib.pid(), SIGTERM);
+        if(procIQServer.pid()!=0) kill(procIQServer.pid(), SIGKILL);
     }
 }
 
@@ -81,7 +106,7 @@ void MainWindow::sendCommand(unsigned char cmd_num, unsigned value)
     cmd[2] = (value>>16)&0xff;
     cmd[3] = (value>>8)&0xff;
     cmd[4] = value&0xff;
-    procDemod.write((char*)cmd, 5);
+    procDistrib.write((char*)cmd, 5);
 }
 
 

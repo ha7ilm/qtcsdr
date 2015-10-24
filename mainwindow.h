@@ -35,7 +35,10 @@ private:
     QList<QPushButton*> modsButtons;
     void untoggleOtherModButtonsThan(QPushButton* pb);
     void sendCommand(unsigned char cmd_num, unsigned value);
+    QString getDemodulatorCommand();
     QProcess procDemod;
+    QProcess procDistrib;
+    QProcess procIQServer;
     QString fifoPipe;
     QTimer tmrRead;
 
