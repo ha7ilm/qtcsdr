@@ -22,7 +22,7 @@ void QMySpectrumWidget::paintEvent(QPaintEvent* event)
     p.drawImage(0,0,scaledImage);
 
     int halfWidth = this->width()/2;
-    int rectX = halfWidth+((float)(this->offsetFreq+this->filterLowCut)/this->sampleRate)*halfWidth;
+    int rectX = halfWidth+((float)(this->offsetFreq+this->filterLowCut)/this->sampleRate)*this->width();
     int rectW = ((float)(this->filterHighCut-this->filterLowCut)/this->sampleRate)*this->width();
     //qDebug() << "pe" << rectX << rectW;
     p.fillRect(rectX,0,rectW,this->height(),QColor::fromRgbF(1,1,1,0.3));
