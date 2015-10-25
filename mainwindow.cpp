@@ -35,8 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <signal.h>
-
-#define CMD_IQSERVER "rtl_tcp -s 2400000 -p 4950 -f 89500000"
+#define CMD_IQSERVER "pgroup -9 rtl_tcp -s 2400000 -p 4950 -f 89500000"
 #define CMD_DISTRIB "pgroup -9 bash -c \"sleep .5; ncat localhost 4950 | ncat -vv -4l 4951 -k --send-only --allow 127.0.0.1\""
 #define CMD_MOD_WFM "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING  | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
 #define CMD_MOD_NFM "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 50 0.005 HAMMING | csdr fmdemod_quadri_cf | csdr limit_ff | csdr deemphasis_nfm_ff 48000 | csdr fastagc_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
