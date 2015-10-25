@@ -158,6 +158,7 @@ void MainWindow::on_toggleRun_toggled(bool checked)
         if(procDemod.pid()!=0)    kill(procDemod.pid(), SIGTERM);
         if(procDistrib.pid()!=0)  kill(procDistrib.pid(), SIGTERM);
         if(procIQServer.pid()!=0) kill(procIQServer.pid(), SIGKILL);
+        if(procFFT.pid()!=0) kill(procFFT.pid(), SIGKILL);
     }
 }
 
