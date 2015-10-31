@@ -61,6 +61,7 @@ MainWindow::MainWindow(QWidget *parent) :
     modsButtons.append(ui->toggleLSB);
     modsButtons.append(ui->toggleUSB);
     connect(&tmrRead, SIGNAL(timeout()), this, SLOT(tmrRead_timeout()));
+    connect(ui->widgetFFT, SIGNAL(shiftChanged(int)), this, SLOT(on_shiftChanged(int)));
     tmrRead.start(10);
 }
 
@@ -120,6 +121,11 @@ void MainWindow::on_toggleAM_toggled(bool checked)  { untoggleOtherModButtonsTha
 void MainWindow::on_toggleUSB_toggled(bool checked) { untoggleOtherModButtonsThan(ui->toggleUSB); }
 void MainWindow::on_toggleLSB_toggled(bool checked) { untoggleOtherModButtonsThan(ui->toggleLSB); }
 
+void MainWindow::on_shiftChanged(int newOffset)
+{
+    ui->spinOffset->setValue(newOffset);
+}
+
 QString MainWindow::getDemodulatorCommand()
 {
     QString myDemodCmd;
@@ -157,6 +163,7 @@ void MainWindow::on_toggleRun_toggled(bool checked)
         procDemod.start(getDemodulatorCommand());
         procFFT.start(CMD_FFT);
         on_spinFreq_valueChanged(ui->spinFreq->value());
+        on_comboDirectSamp_currentIndexChanged(0);
         updateFilterBw();
     }
     else
@@ -191,10 +198,10 @@ void MainWindow::sendCommand(unsigned char cmd_num, unsigned value)
 }
 
 
-
 void MainWindow::on_spinFreq_valueChanged(int val)
 {
-    sendCommand(RTLTCP_SET_FREQ, ui->spinFreq->value()-ui->spinOffset->value());
+    ui->spinCenter->setValue(ui->spinFreq->value()-ui->spinOffset->value());
+    sendCommand(RTLTCP_SET_FREQ, ui->spinCenter->value());
     //procDemod.write("\x01\x05\x55\xa9\x60");
     //procDemod.write("macska\n");
 }
@@ -202,4 +209,16 @@ void MainWindow::on_spinFreq_valueChanged(int val)
 void MainWindow::on_spinOffset_valueChanged(int arg1)
 {
     setShift();
+    ui->spinFreq->setValue(ui->spinCenter->value()+ui->spinOffset->value());
+}
+
+void MainWindow::on_spinCenter_valueChanged(int arg1)
+{
+    sendCommand(RTLTCP_SET_FREQ, ui->spinCenter->value());
+    ui->spinFreq->setValue(ui->spinCenter->value()+ui->spinOffset->value());
+}
+
+void MainWindow::on_comboDirectSamp_currentIndexChanged(int index)
+{
+    sendCommand(RTLTCP_SET_DIRECT_SAMPLING,ui->comboDirectSamp->currentIndex());
 }

@@ -54,8 +54,10 @@ private:
     virtual void paintEvent(QPaintEvent*);
     virtual void resizeEvent(QResizeEvent * event);
     void shiftImageOneLineDown();
+    void mouseReleaseEvent(QMouseEvent* event);
 
 signals:
+    void shiftChanged(int offset);
 
 public slots:
 

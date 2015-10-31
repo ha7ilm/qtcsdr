@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "qmyspectrumwidget.h"
 #include <math.h>
 #include <QDebug>
+#include <QMouseEvent>
 
 QMySpectrumWidget::QMySpectrumWidget(QWidget *parent) :
     QWidget(parent)
@@ -56,6 +57,13 @@ void QMySpectrumWidget::paintEvent(QPaintEvent* event)
     int rectW = ((float)(this->filterHighCut-this->filterLowCut)/this->sampleRate)*this->width();
     //qDebug() << "pe" << rectX << rectW;
     p.fillRect(rectX,0,rectW,this->height(),QColor::fromRgbF(1,1,1,0.3));
+}
+
+void QMySpectrumWidget::mouseReleaseEvent(QMouseEvent* event)
+{
+
+    int halfWidth = this->width()/2;
+    emit shiftChanged(  ((event->x()-halfWidth)/(float)this->width()) * this->sampleRate  );
 }
 
 void QMySpectrumWidget::resizeEvent(QResizeEvent* event)

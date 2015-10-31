@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QTextStream>
 
 #define RTLTCP_SET_FREQ 0x1
+#define RTLTCP_SET_DIRECT_SAMPLING 0x9
 
 namespace Ui {
 class MainWindow;
@@ -61,8 +62,13 @@ private slots:
     void on_spinFreq_valueChanged(int val);
     void tmrRead_timeout();
     void setShift();
+    void on_shiftChanged(int newOffset);
 
     void on_spinOffset_valueChanged(int arg1);
+
+    void on_spinCenter_valueChanged(int arg1);
+
+    void on_comboDirectSamp_currentIndexChanged(int index);
 
 private:
     Ui::MainWindow *ui;

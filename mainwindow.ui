@@ -1,33 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-This software is part of qtcsdr.
-
-Copyright (c) 2015, Andras Retzler <randras@sdr.hu>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the copyright holder nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL ANDRAS RETZLER BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
--->
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
@@ -72,13 +43,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <property name="minimumSize">
        <size>
         <width>603</width>
-        <height>73</height>
+        <height>120</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>73</height>
+        <height>120</height>
        </size>
       </property>
       <property name="font">
@@ -119,7 +90,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>40</y>
+         <y>80</y>
          <width>111</width>
          <height>31</height>
         </rect>
@@ -151,7 +122,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
        <property name="geometry">
         <rect>
          <x>120</x>
-         <y>40</y>
+         <y>80</y>
          <width>171</width>
          <height>31</height>
         </rect>
@@ -224,13 +195,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
        <property name="geometry">
         <rect>
          <x>300</x>
-         <y>40</y>
-         <width>301</width>
+         <y>80</y>
+         <width>141</width>
          <height>31</height>
         </rect>
        </property>
        <property name="text">
-        <string>Run</string>
+        <string>Receive</string>
        </property>
        <property name="checkable">
         <bool>true</bool>
@@ -250,6 +221,79 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
        </property>
        <property name="checkable">
         <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QSpinBox" name="spinCenter">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>40</y>
+         <width>171</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="maximum">
+        <number>1999999999</number>
+       </property>
+       <property name="singleStep">
+        <number>1000</number>
+       </property>
+       <property name="value">
+        <number>89300000</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_3">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>40</y>
+         <width>111</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Center:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="comboDirectSamp">
+       <property name="geometry">
+        <rect>
+         <x>300</x>
+         <y>42</y>
+         <width>301</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <item>
+        <property name="text">
+         <string>Quadrature sampling</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Direct sampling (I branch)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Direct sampling (Q branch)</string>
+        </property>
+       </item>
+      </widget>
+      <widget class="QPushButton" name="toggleTransmit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>450</x>
+         <y>80</y>
+         <width>151</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Transmit</string>
        </property>
       </widget>
      </widget>
