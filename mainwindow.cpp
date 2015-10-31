@@ -175,6 +175,7 @@ void MainWindow::setShift()
 {
     QString shiftString = QString::number(-ui->spinOffset->value()/2400000.0)+"\n";
     write(fifoPipe,shiftString.toStdString().c_str(),shiftString.length());
+    ui->widgetFFT->offsetFreq = ui->spinOffset->value();
 }
 
 void MainWindow::sendCommand(unsigned char cmd_num, unsigned value)

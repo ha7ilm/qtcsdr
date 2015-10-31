@@ -35,12 +35,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 QMySpectrumWidget::QMySpectrumWidget(QWidget *parent) :
     QWidget(parent)
 {
+    oneLineOfSpectrum=new QImage(FFTSize, 1, QImage::Format_ARGB32);
     reinit();
 }
 
 void QMySpectrumWidget::reinit()
 {
-    spectrumImage=new QImage(FFTSize, this->size().height(), QImage::Format_ARGB32);
+    spectrumImage=new QImage(this->size(), QImage::Format_ARGB32);
     for(int i=0;i<spectrumImage->bytesPerLine()*spectrumImage->height()/sizeof(unsigned);i++)
         *(((unsigned*)spectrumImage->bits())+i)=0;
 }
@@ -48,8 +49,7 @@ void QMySpectrumWidget::reinit()
 void QMySpectrumWidget::paintEvent(QPaintEvent* event)
 {
     QPainter p(this);
-    QImage scaledImage = spectrumImage->scaled(this->width(),this->height(),Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    p.drawImage(0,0,scaledImage);
+    p.drawImage(0,0,*spectrumImage);
 
     int halfWidth = this->width()/2;
     int rectX = halfWidth+((float)(this->offsetFreq+this->filterLowCut)/this->sampleRate)*this->width();
@@ -118,13 +118,18 @@ unsigned chEndianness(unsigned i)
      for(int i=0;i<FFTSize;i++)
      {
          unsigned rawColor = waterfallMakeColor(fdata[i]);
-         QRgb* rgba = ((QRgb*)spectrumImage->bits())+i;
+         QRgb* rgba = ((QRgb*)oneLineOfSpectrum->bits())+i;
          QColor col = QColor::fromRgba(*rgba);
          col.setRed((rawColor&0xff000000)>>24);
          col.setGreen((rawColor&0xff0000)>>16);
          col.setBlue((rawColor&0xff00)>>8);
          col.setAlpha(rawColor&0xff);
          *rgba = col.rgba();
+     }
+     QImage scaledImage = oneLineOfSpectrum->scaled(this->width(),1,Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+     for(int i=0;i<this->width();i++)
+     {
+         ((QRgb*)spectrumImage->bits())[i] = ((QRgb*)scaledImage.bits())[i];
      }
      from->remove(0,FFTSize*sizeof(unsigned));
      this->repaint();

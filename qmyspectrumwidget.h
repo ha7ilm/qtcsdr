@@ -42,6 +42,7 @@ class QMySpectrumWidget : public QWidget
 public:
     explicit QMySpectrumWidget(QWidget *parent = 0);
     QImage* spectrumImage;
+    QImage* oneLineOfSpectrum;
     int FFTSize = 2048;
     bool takeOneWaterfallLine(QByteArray* from);
     int sampleRate = 2400000;
