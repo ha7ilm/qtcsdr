@@ -60,6 +60,9 @@ private slots:
     void on_toggleRun_toggled(bool checked);
     void on_spinFreq_valueChanged(int val);
     void tmrRead_timeout();
+    void setShift();
+
+    void on_spinOffset_valueChanged(int arg1);
 
 private:
     Ui::MainWindow *ui;
@@ -73,12 +76,11 @@ private:
     QProcess procDistrib;
     QProcess procIQServer;
     QProcess procFFT;
-    QString fifoPipe;
+    QString fifoPipePath;
+    int fifoPipe;
     QTimer tmrRead;
     QTextStream qStdOut;
     QByteArray FFTDataBuffer;
-
-
 };
 
 #endif // MAINWINDOW_H
