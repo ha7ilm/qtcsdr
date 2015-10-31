@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMouseEvent>
 
 QMySpectrumWidget::QMySpectrumWidget(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent), FFTSize(2048), sampleRate(2400000), offsetFreq(0), filterLowCut(0), filterHighCut(0)
 {
     oneLineOfSpectrum=new QImage(FFTSize, 1, QImage::Format_ARGB32);
     reinit();

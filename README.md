@@ -12,3 +12,25 @@ Requirements:
 * <a href="https://github.com/ha7ilm/pgroup">pgroup</a>
 * ncat from the *nmap* package
 * mplayer
+
+# What you will need
+* You will need an RTL-SDR receiver
+
+# How to setup
+
+    sudo apt-get install qt5-default qt5-qmake
+    
+	git clone https://github.com/ha7ilm/pgroup.git
+    cd pgroup
+    make && sudo make install
+    cd ..
+    
+    git clone https://github.com/ha7ilm/qtcsdr.git
+    cd qtcsdr
+    mkdir build
+    cd build
+    qmake ..
+    make
+    
+    ./qtcsdr
+    
