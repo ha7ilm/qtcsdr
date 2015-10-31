@@ -37,14 +37,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #include <fcntl.h>
 #include <signal.h>
-#define CMD_IQSERVER "pgroup -9 rtl_tcp -s 2400000 -p 4950 -f 89500000"
-#define CMD_DISTRIB "pgroup -9 bash -c \"sleep .5; ncat localhost 4950 | ncat -vv -4l 4951 -k --send-only --allow 127.0.0.1\""
-#define CMD_MOD_WFM "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc 10 0.05 HAMMING  | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_MOD_NFM "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc 50 0.005 HAMMING | csdr fmdemod_quadri_cf | csdr limit_ff | csdr deemphasis_nfm_ff 48000 | csdr fastagc_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_MOD_AM  "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc 50 0.005 HAMMING | csdr amdemod_cf | csdr fastdcblock_ff | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_MOD_USB "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc 50 0.005 HAMMING | csdr bandpass_fir_fft_cc 0 0.1 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_MOD_LSB "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc 50 0.005 HAMMING | csdr bandpass_fir_fft_cc -0.1 0 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 | mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -\""
-#define CMD_FFT     "pgroup -9 bash -c \"sleep .8; ncat localhost 4951 | csdr convert_u8_f | csdr fft_cc 2048 240000 | csdr logpower_cf -70 | csdr fft_exchange_sides_ff 2048\""
+#define CMD_IQSERVER "pgroup -9 rtl_tcp -s %SAMP_RATE% -p 4950 -f 89500000"
+#define CMD_DISTRIB "pgroup -9 bash -c \"(for anything in {0..10}; do ncat localhost 4950; sleep .3; done) | ncat -vv -4l 4951 -k --send-only --allow 127.0.0.1\""
+#define CMD_MOD_WFM "pgroup -9 bash -c \"(for anything in {0..10}; do ncat localhost 4951; sleep .3; done) | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc %WFM_DECIM% 0.05 HAMMING  | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 |  %AUDIOPLAYER%\""
+#define CMD_MOD_NFM "pgroup -9 bash -c \"(for anything in {0..10}; do ncat localhost 4951; sleep .3; done) | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc %DECIM% 0.005 HAMMING | csdr fmdemod_quadri_cf | csdr limit_ff | csdr deemphasis_nfm_ff 48000 | csdr fastagc_ff | csdr convert_f_i16 |       %AUDIOPLAYER%\""
+#define CMD_MOD_AM  "pgroup -9 bash -c \"(for anything in {0..10}; do ncat localhost 4951; sleep .3; done) | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc %DECIM% 0.005 HAMMING | csdr amdemod_cf | csdr fastdcblock_ff | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 |                           %AUDIOPLAYER%\""
+#define CMD_MOD_USB "pgroup -9 bash -c \"(for anything in {0..10}; do ncat localhost 4951; sleep .3; done) | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc %DECIM% 0.005 HAMMING | csdr bandpass_fir_fft_cc 0 0.1 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 |          %AUDIOPLAYER%\""
+#define CMD_MOD_LSB "pgroup -9 bash -c \"(for anything in {0..10}; do ncat localhost 4951; sleep .3; done) | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc %DECIM% 0.005 HAMMING | csdr bandpass_fir_fft_cc -0.1 0 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 |         %AUDIOPLAYER%\""
+#define CMD_FFT     "pgroup -9 bash -c \"(for anything in {0..10}; do ncat localhost 4951; sleep .3; done) | csdr convert_u8_f | csdr fft_cc 2048 240000 | csdr logpower_cf -70 | csdr fft_exchange_sides_ff 2048\""
 
 //#define CMD_WFM "pgroup -9 bash -c \"rtl_tcp -s 2400000 -p 4951 -f 89500000 & (sleep 1; nc localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 768 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -)\""
 
@@ -54,6 +54,28 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow), qStdOut(stdout)
 {
     ui->setupUi(this);
+
+
+    if(QCoreApplication::arguments().count()>=2 && QCoreApplication::arguments().at(1) == QString("--mplayer"))
+    {
+         audioPlayerCommand="mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 %ADEVICE% -demuxer rawaudio -";
+         if(QCoreApplication::arguments().count()>=3)
+         {
+             QString aoParam = QCoreApplication::arguments().at(2);
+             audioPlayerCommand=audioPlayerCommand.replace("%ADEVICE%",QString("-ao alsa:device=")+aoParam.replace(",",".").replace(":","="));
+         }
+         else
+             audioPlayerCommand=audioPlayerCommand.replace("%ADEVICE%","");
+    }
+    else
+    {
+        audioPlayerCommand  = "aplay -f S16_LE -r48000 -c1 -D ";
+        if (QCoreApplication::arguments().count()>=3 && QCoreApplication::arguments().at(1) == QString("--alsa"))
+            audioPlayerCommand+=QCoreApplication::arguments().at(2);
+        else
+            audioPlayerCommand+="default";
+    }
+    qDebug() << audioPlayerCommand;
 
     modsButtons.append(ui->toggleAM);
     modsButtons.append(ui->toggleNFM);
@@ -134,7 +156,13 @@ QString MainWindow::getDemodulatorCommand()
     if(ui->toggleAM->isChecked())  myDemodCmd=CMD_MOD_AM;
     if(ui->toggleLSB->isChecked()) myDemodCmd=CMD_MOD_LSB;
     if(ui->toggleUSB->isChecked()) myDemodCmd=CMD_MOD_USB;
-    myDemodCmd=myDemodCmd.replace("%FIFO%", fifoPipePath);
+    myDemodCmd=myDemodCmd
+            .replace("%FIFO%", fifoPipePath)
+            .replace("%AUDIOPLAYER%", audioPlayerCommand)
+            .replace("%SAMP_RATE%",ui->comboSampRate->currentText())
+            .replace("%DECIM%", QString::number(ui->comboSampRate->currentText().toInt()/48000))
+            .replace("%WFM_DECIM%", QString::number(ui->comboSampRate->currentText().toInt()/240000));
+    qDebug() << "myDemodCmd ="<<myDemodCmd;
     return myDemodCmd;
 }
 
@@ -152,11 +180,15 @@ void MainWindow::on_toggleRun_toggled(bool checked)
 {
     if(checked)
     {
+        ui->widgetFFT->sampleRate=ui->comboSampRate->currentText().toInt();
+        ui->comboSampRate->setEnabled(false);
         fifoPipePath = QString("/tmp/qtcsdr_shift_pipe_")+QString::number(rand());
         mkfifo(fifoPipePath.toStdString().c_str(), 0600);
         fifoPipe=open(fifoPipePath.toStdString().c_str(), O_RDWR);
         setShift();
-        procIQServer.start(CMD_IQSERVER);
+        QString IQCommand = QString(CMD_IQSERVER).replace("%SAMP_RATE%",ui->comboSampRate->currentText());
+        qDebug() << "IQCommand =" << IQCommand;
+        procIQServer.start(IQCommand);
         procIQServer.waitForStarted(1000);
         procDistrib.start(CMD_DISTRIB);
         procDistrib.waitForStarted(1000);
@@ -168,11 +200,12 @@ void MainWindow::on_toggleRun_toggled(bool checked)
     }
     else
     {
+        ui->comboSampRate->setEnabled(true);
         unlink(fifoPipePath.toStdString().c_str());
         if(procDemod.pid()!=0)    kill(procDemod.pid(), SIGTERM);
         if(procDistrib.pid()!=0)  kill(procDistrib.pid(), SIGTERM);
-        if(procIQServer.pid()!=0) kill(procIQServer.pid(), SIGKILL);
-        if(procFFT.pid()!=0)      kill(procFFT.pid(), SIGKILL);
+        if(procIQServer.pid()!=0) kill(procIQServer.pid(), SIGTERM);
+        if(procFFT.pid()!=0)      kill(procFFT.pid(), SIGTERM);
         procFFT.readAll();
         FFTDataBuffer.clear();
     }
@@ -180,7 +213,7 @@ void MainWindow::on_toggleRun_toggled(bool checked)
 
 void MainWindow::setShift()
 {
-    QString shiftString = QString::number(-ui->spinOffset->value()/2400000.0)+"\n";
+    QString shiftString = QString::number(-ui->spinOffset->value()/(float)ui->comboSampRate->currentText().toInt())+"\n";
     write(fifoPipe,shiftString.toStdString().c_str(),shiftString.length());
     ui->widgetFFT->offsetFreq = ui->spinOffset->value();
 }

@@ -30,7 +30,7 @@ Requirements:
     mkdir build
     cd build
     qmake ..
-    make
+    make -j4
     
     ./qtcsdr
     

@@ -87,6 +87,8 @@ private:
     QTimer tmrRead;
     QTextStream qStdOut;
     QByteArray FFTDataBuffer;
+    QString audioPlayerCommand;
+    QString audioRecordCommand;
 };
 
 #endif // MAINWINDOW_H

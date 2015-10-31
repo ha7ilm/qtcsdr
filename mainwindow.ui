@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>621</width>
-    <height>370</height>
+    <height>391</height>
    </rect>
   </property>
   <property name="font">
@@ -43,13 +43,13 @@
       <property name="minimumSize">
        <size>
         <width>603</width>
-        <height>120</height>
+        <height>159</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>120</height>
+        <height>159</height>
        </size>
       </property>
       <property name="font">
@@ -197,7 +197,7 @@
          <x>300</x>
          <y>80</y>
          <width>141</width>
-         <height>31</height>
+         <height>71</height>
         </rect>
        </property>
        <property name="text">
@@ -289,12 +289,68 @@
          <x>450</x>
          <y>80</y>
          <width>151</width>
-         <height>31</height>
+         <height>71</height>
         </rect>
        </property>
        <property name="text">
         <string>Transmit</string>
        </property>
+      </widget>
+      <widget class="QLabel" name="label_4">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>120</y>
+         <width>121</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Samp. rate:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="comboSampRate">
+       <property name="geometry">
+        <rect>
+         <x>120</x>
+         <y>120</y>
+         <width>171</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="currentIndex">
+        <number>2</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>2400000</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2048000</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1200000</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1024000</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>960000</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>240000</string>
+        </property>
+       </item>
       </widget>
      </widget>
     </item>
