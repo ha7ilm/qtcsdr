@@ -100,7 +100,7 @@ Guide:
     cd qtcsdr/build
 
 * Now you should plug the USB audio card and the RTL-SDR into the USB hub connected to the Pi. 
-* Also plug in microphone and headphones to the audio card.
+* Also plug microphone and headphones in the audio card.
 
 This is the syntax of the **qtcsdr** command is:
 
@@ -118,7 +118,7 @@ You will see multiple entries. For me this is the correct one for the USB device
 
 ...now we know that our ALSA device is: **hw:CARD=Device,DEV=0**
 
-So that we can run:
+So we can run:
 
     ./qtcsdr --rpitx --alsa hw:CARD=Device,DEV=0
 
