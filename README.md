@@ -42,14 +42,14 @@ A short list of requirements:
 * <a href="http://sdr.osmocom.org/trac/wiki/rtl-sdr">rtl_sdr</a>
 * <a href="https://github.com/simonyiszk/csdr">csdr</a>
 * <a href="https://github.com/ha7ilm/pgroup">pgroup</a>
-* <a href="https://github.com/ha7ilm/rpitx">rpitx</a> if you want to transmit<br />(this is my modified version that will work with **qtcsdr**; the original was written by F5OEO)
-* ncat from the *nmap* package (this will distribute the I/Q signal between processes).
+* <a href="https://github.com/ha7ilm/rpitx">rpitx</a> - if you want to transmit<br />(it was written by F5OEO, and I modified it to make it work with **qtcsdr**)
+* **ncat** from the **nmap** package (this will distribute the I/Q signal between processes).
 
-Guide (TBD):
+Guide:
 
     sudo apt-get install nmap qt5-default qt5-qmake git libfftw3-dev
 
-    #Install rpitx, the transmitter
+    #Install rpitx by F5OEO, the transmitter
     git clone https://github.com/ha7ilm/rpitx.git
     cd rpitx
     bash install.sh
@@ -88,6 +88,9 @@ Guide (TBD):
     #(if you want to use it for DVB-T reception later, you should undo this change):
     sudo bash -c 'echo -e "\n# for RTL-SDR:\nblacklist dvb_usb_rtl28xxu\n" >> /etc/modprobe.d/blacklist.conf'
     sudo rmmod dvb_usb_rtl28xxu # disable that kernel module for the current session
+    
+    #Go back to qtcsdr directory
+    cd qtcsdr/build
 
 * Now you should plug the USB audio card and the RTL-SDR into the USB hub connected to the Pi. 
 * Also plug in microphone and headphones to the audio card.
@@ -100,7 +103,7 @@ You will need to get the ALSA device ID of your USB audio card.
 
     aplay -L
 
-You will see multiple entries. For me this one is the correct one for the USB device:
+You will see multiple entries. For me this is the correct one for the USB device:
 
     hw:CARD=Device,DEV=0
         USB PnP Sound Device, USB Audio
@@ -152,3 +155,21 @@ Now you should see the raw I/Q samples in hexadecimal, something like this:
 This is correct.
 
 But if you just see an error message, then something is wrong.
+
+### USB Audio
+
+I'm using a cheap CM108-based USB stick, which is not too good quality, but works. 
+If you know the ALSA device ID, you can check that it works:
+
+You can record something from the microphone input...
+
+    arecord -f S16_LE -r48000 -c1 -D <alsa_device_id> | csdr mono2stereo_i16  > ~/test_audio.raw
+
+...and then play it back.
+
+     cat ~/test_audio.raw | aplay -f S16_LE -r48000 -c2 -D <alsa_device_id>
+
+Don't forget to remove the test file from the SD card.
+
+    rm ~/test_audio.raw
+
