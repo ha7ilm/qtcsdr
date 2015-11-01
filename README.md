@@ -1,10 +1,40 @@
 # qtcsdr
 
-This will be once a Qt-based GUI for *csdr*.
+**qtcsdr** makes a ham transceiver out of your Raspberry Pi + RTL-SDR!
 
 ![qtcsdr](/screenshot.png?raw=true)
 
-Requirements:
+## What you will need to make it work
+* You will need an RTL-SDR dongle which will be the SDR receiver.
+* You will need a Raspberry Pi 2, which will be the SDR transmitter.<br />With the help of the fantastic <a href="rpitx">rpitx project</a>, we can transmit AM/NFM/WFM/LSB/USB on the "GPIO 18" (number 12) pin of the Pi (<a href="http://301o583r8shhildde3s0vcnh.wpengine.netdna-cdn.com/wp-content/uploads/2015/04/Raspberry-Pi-GPIO-compressed.jpg">see pinout over here</a>).
+* You will need **a proper bandpass filter**, see explanation below.<br />Soon you will be able to purchase the QRPi filter+amplifier board that was featured on TAPR DCC 2015, <a href="http://rfsparkling.com/qrpi">see details here.</a> (You can also build your own filter board circuit based on how-tos found on the web.)
+* To transmit, you will need an USB audio card, because the Raspberry Pi doesn't have a microphone input. 
+* You may or may not need an external powered USB hub to supply enough current to the audio card and the RTL-SDR.
+
+## Warning
+
+To transmit on ham radio bands, you will need a ham radio license.
+
+Even if you do have a ham radio license:
+
+* Do not transmit without a bandpass filter!
+* Do not transmit without a bandpass filter!
+* Do not transmit without a bandpass filter!
+ 
+The Raspberry Pi GPIO 18 is a digital output, which generates square wave signals, so that if you transmit on 28 MHz, then you will also transmit on:
+
+* 28 × 3 = 84 MHz
+* 28 × 5 = 140 MHz
+* 28 × 7 = 196 MHz
+
+...and actually you may distrub some important radio communication service. Do no do this!
+
+Also NEVER EVER transmit or do any tests with your transmitter in the airband (where flights communicate)! 
+(The VHF airband is between 108 MHz and 137MHz.) You have been warned!
+
+## How to set it up
+
+A short list of requirements:
 
 * Qt5
 * <a href="http://sdr.osmocom.org/trac/wiki/rtl-sdr">rtl_sdr</a>
@@ -13,10 +43,7 @@ Requirements:
 * ncat from the *nmap* package
 * mplayer
 
-# What you will need
-* You will need an RTL-SDR receiver
-
-# How to setup
+Guide (TBD):
 
     sudo apt-get install qt5-default qt5-qmake
     
@@ -34,3 +61,45 @@ Requirements:
     
     ./qtcsdr
     
+
+
+## Troubleshooting
+
+### RTL-SDR
+
+To see whether RTL-SDR is working, you can run the following:
+
+    rtl_sdr - | xxd | head
+    
+Now you should see the raw I/Q samples in hexadecimal, something like this:
+
+    $ rtl_sdr - | xxd | head
+    Found 1 device(s):
+    0:  Realtek, RTL2838UHIDIR, SN: 00000001
+    
+    Using device 0: Generic RTL2832U OEM
+    Found Rafael Micro R820T tuner
+    Sampling at 2048000 S/s.
+    LO: 106000 kHz, MixDiv: 32, PLLDiv: 58, VCO 3392000 kHz, SDM: 58254 
+    Tuned to 100000000 Hz.
+    Tuner gain set to automatic.
+    Reading samples in async mode...
+    0000000: 778c 7a74 8c82 7583 8376 838c 7977 897e  w.zt..u..v..yw.~
+    0000010: 7d8c 8173 828a 7578 8e7c 7f8d 8175 8d86  }..s..ux.|...u..
+    0000020: 6f82 8873 7e8b 7c78 8582 7086 857e 8390  o..s~.|x..p..~..
+    0000030: 7a76 8e7f 7485 7f74 8393 7478 8d7c 7989  zv..t..t..tx.|y.
+    0000040: 8474 8887 797a 877d 7c87 8275 8b85 757f  .t..yz.}|..u..u.
+    0000050: 877c 7f8b 7f76 8b88 737f 8677 7e88 7c72  .|...v..s..w~.|r
+    0000060: 8880 747f 8476 8489 7e74 8f80 7986 887a  ..t..v..~t..y..z
+    0000070: 818b 7777 917d 7684 7b77 818d 757d 8b83  ..ww.}v.{w..u}..
+    0000080: 7488 8173 868e 7679 8d79 7385 7f70 8885  t..s..vy.ys..p..
+    0000090: 727a 8a7d 7d8c 7d75 8685 797e 8a77 7a8c  rz.}}.}u..y~.wz.
+    Signal caught, exiting!
+    Signal caught, exiting!
+    Short write, samples lost, exiting!
+    
+    User cancel, exiting...
+
+This is correct.
+
+But if you just see an error message, then something is wrong.
