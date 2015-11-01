@@ -9,6 +9,8 @@ Click on the video to see it in action:
 <a href="https://www.youtube.com/watch?v=3Y8qJ6nmNPY" target="_blank"><img src="http://ha5kfu.sch.bme.hu/up/levlista/qtcsdr-screenshot-youtube.png" 
 alt="qtcsdr"/></a>
 
+Big thanks to **Evariste, F5OEO** for <a href="https://github.com/F5OEO/rpitx/">rpitx</a> for making that possible.
+
 ## What you will need to make it work
 * You will need an RTL-SDR dongle which will be the SDR receiver.
 * You will need a Raspberry Pi 2, which will be the SDR transmitter.<br />With the help of the fantastic <a href="https://github.com/F5OEO/rpitx">rpitx project</a>, we can transmit AM/NFM/WFM/LSB/USB on the "GPIO 18" (number 12) pin of the Pi (<a href="http://301o583r8shhildde3s0vcnh.wpengine.netdna-cdn.com/wp-content/uploads/2015/04/Raspberry-Pi-GPIO-compressed.jpg">see pinout over here</a>).
