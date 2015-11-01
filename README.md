@@ -49,7 +49,7 @@ Guide:
 
     sudo apt-get install nmap qt5-default qt5-qmake git libfftw3-dev
 
-    #Install rpitx by F5OEO, the transmitter
+    #Install the SDR transmitter software rpitx by F5OEO
     git clone https://github.com/ha7ilm/rpitx.git
     cd rpitx
     bash install.sh
