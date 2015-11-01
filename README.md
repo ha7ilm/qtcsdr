@@ -17,9 +17,9 @@ To transmit on ham radio bands, you will need a ham radio license.
 
 Even if you do have a ham radio license:
 
-* Do not transmit without a bandpass filter!
-* Do not transmit without a bandpass filter!
-* Do not transmit without a bandpass filter!
+* Do not transmit on an antenna without a bandpass filter!
+* Do not transmit on an antenna without a bandpass filter!
+* Do not transmit on an antenna without a bandpass filter!
  
 The Raspberry Pi GPIO 18 is a digital output, which generates square wave signals, so that if you transmit on 28 MHz, then you will also transmit on:
 
