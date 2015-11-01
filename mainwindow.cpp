@@ -46,8 +46,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define CMD_MOD_LSB "pgroup -9 bash -c \"(for anything in {0..10}; do ncat 127.0.0.1 4951; sleep .3; done) | csdr convert_u8_f | csdr shift_addition_cc --fifo %FIFO% | csdr fir_decimate_cc %DECIM% 0.005 HAMMING | csdr bandpass_fir_fft_cc -0.1 0 0.05 | csdr realpart_cf | csdr agc_ff | csdr limit_ff | csdr convert_f_i16 |         %AUDIOPLAYER%\""
 #define CMD_FFT     "pgroup -9 bash -c \"(for anything in {0..10}; do ncat 127.0.0.1 4951; sleep .3; done) | csdr convert_u8_f | csdr fft_cc 2048 %FFT_READ_SIZE% | csdr logpower_cf -70 | csdr fft_exchange_sides_ff 2048\""
 
+#define CMD_ARECORD "arecord %ADEVICE% -f S16_LE -r 48000 -c 1"
+
+#define CMD_TX_WFM  "pgroup bash -c \"%ARECORD% | csdr convert_i16_f | csdr gain_ff 70000 | csdr convert_f_samplerf 20833 | (gksu touch; sudo rpitx -i- -m RF -f %TXFREQ%)\""
+#define CMD_TX_NFM  "pgroup bash -c \"%ARECORD% | csdr convert_i16_f | csdr gain_ff 7000 | csdr convert_f_samplerf 20833 | (gksu touch; sudo rpitx -i- -m RF -f %TXFREQ%)\""
+#define CMD_TX_AM   "pgroup bash -c \"%ARECORD% | csdr convert_i16_f | csdr dsb_fc | csdr add_dcoffset_cc | (gksu touch; sudo rpitx -i- -m IQFLOAT -f %TXFREQ_AM%)\""
+#define CMD_TX_USB  "pgroup bash -c \"%ARECORD% | csdr convert_i16_f | csdr dsb_fc | csdr bandpass_fir_fft_cc 0 0.1 0.01 | csdr gain_ff 2 | csdr shift_addition_cc 0.2 | (gksu touch; sudo rpitx -i- -m IQFLOAT -f %TXFREQ_SSB%)\""
+#define CMD_TX_LSB  "pgroup bash -c \"%ARECORD% | csdr convert_i16_f | csdr dsb_fc | csdr bandpass_fir_fft_cc -0.1 0 0.01 | csdr gain_ff 2 | csdr shift_addition_cc 0.2 | (gksu touch; sudo rpitx -i- -m IQFLOAT -f %TXFREQ_SSB%)\""
+
 //#define CMD_WFM "pgroup -9 bash -c \"rtl_tcp -s 2400000 -p 4951 -f 89500000 & (sleep 1; nc localhost 4951 | csdr convert_u8_f | csdr shift_addition_cc -0.085 | csdr fir_decimate_cc 10 0.05 HAMMING | csdr fmdemod_quadri_cf | csdr fractional_decimator_ff 5 | csdr deemphasis_wfm_ff 48000 50e-6 | csdr convert_f_i16 | mplayer -cache 768 -quiet -rawaudio samplesize=2:channels=1:rate=48000 -demuxer rawaudio -)\""
 
+
+QString MainWindow::getNextArgAfter(QString what)
+{
+    if(QCoreApplication::arguments().contains(what))
+    {
+        int indexOfWhat = QCoreApplication::arguments().indexOf(what);
+        if(QCoreApplication::arguments().count()>indexOfWhat+1)
+        {
+            if(!QCoreApplication::arguments().at(indexOfWhat+1).startsWith("--"))
+            {
+                return QCoreApplication::arguments().at(indexOfWhat+1);
+            }
+        }
+    }
+    return "";
+}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -55,23 +79,32 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    if(QCoreApplication::arguments().contains("--rpitx"))
+    {
+        ui->toggleTransmit->setEnabled(true);
+        ui->comboSampRate->setCurrentIndex(4);
+        //ui->spinOffset->setValue(100000);
+        ui->spinCenter->setValue(28200000);
+        this->resize(this->width(),ui->widgetControls->height()+100);
+    }
 
-    if(QCoreApplication::arguments().count()>=2 && QCoreApplication::arguments().at(1) == QString("--mplayer"))
+    QString nextArg;
+
+    if(QCoreApplication::arguments().contains("--mplayer"))
     {
          audioPlayerCommand="mplayer -cache 1024 -quiet -rawaudio samplesize=2:channels=1:rate=48000 %ADEVICE% -demuxer rawaudio -";
-         if(QCoreApplication::arguments().count()>=3)
+         if(!(alsaDevice=getNextArgAfter("--mplayer")).isEmpty())
          {
-             QString aoParam = QCoreApplication::arguments().at(2);
-             audioPlayerCommand=audioPlayerCommand.replace("%ADEVICE%",QString("-ao alsa:device=")+aoParam.replace(",",".").replace(":","="));
+             audioPlayerCommand=audioPlayerCommand.replace("%ADEVICE%",QString("-ao alsa:device=")+alsaDevice.replace(",",".").replace(":","="));
          }
          else
              audioPlayerCommand=audioPlayerCommand.replace("%ADEVICE%","");
     }
     else
     {
-        audioPlayerCommand  = "aplay -f S16_LE -r48000 -c1 -D ";
-        if (QCoreApplication::arguments().count()>=3 && QCoreApplication::arguments().at(1) == QString("--alsa"))
-            audioPlayerCommand+=QCoreApplication::arguments().at(2);
+        audioPlayerCommand  = "csdr mono2stereo_i16 | aplay -f S16_LE -r48000 -c2 -D ";
+        if (!(alsaDevice=getNextArgAfter("--alsa")).isEmpty())
+            audioPlayerCommand+=alsaDevice;
         else
             audioPlayerCommand+="default";
     }
@@ -124,6 +157,7 @@ void MainWindow::tmrRead_timeout()
     redirectProcessOutput(procDistrib);
     redirectProcessOutput(procIQServer);
     redirectProcessOutput(procFFT, true);
+    redirectProcessOutput(procTX);
 
     if(procFFT.pid()!=0)
     {
@@ -168,6 +202,25 @@ QString MainWindow::getDemodulatorCommand()
     return myDemodCmd;
 }
 
+QString MainWindow::getModulatorCommand()
+{
+    QString myModCmd;
+    if(ui->toggleWFM->isChecked()) myModCmd=CMD_TX_WFM;
+    if(ui->toggleNFM->isChecked()) myModCmd=CMD_TX_NFM;
+    if(ui->toggleAM->isChecked())  myModCmd=CMD_TX_AM;
+    if(ui->toggleLSB->isChecked()) myModCmd=CMD_TX_LSB;
+    if(ui->toggleUSB->isChecked()) myModCmd=CMD_TX_USB;
+    myModCmd=myModCmd
+            .replace("%ARECORD%", CMD_ARECORD)
+            .replace("%ADEVICE%", (alsaDevice.isEmpty())?"":"-D "+alsaDevice)
+            .replace("%TXFREQ_AM%", QString::number((ui->spinFreq->value()+10000)/1000,'f',0))
+            .replace("%TXFREQ%", QString::number(ui->spinFreq->value()/1000,'f',0))
+            .replace("%TXFREQ_SSB%", QString::number((ui->spinFreq->value()+2000)/1000,'f',0));
+    qDebug() << "myModCmd ="<<myModCmd;
+    return myModCmd;
+}
+
+
 void MainWindow::updateFilterBw()
 {
     ui->widgetFFT->offsetFreq = ui->spinOffset->value();
@@ -195,7 +248,9 @@ void MainWindow::on_toggleRun_toggled(bool checked)
         procDistrib.start(CMD_DISTRIB);
         procDistrib.waitForStarted(1000);
         procDemod.start(getDemodulatorCommand());
-        procFFT.start(QString(CMD_FFT).replace("%FFT_READ_SIZE%", QString::number(ui->comboSampRate->currentText().toInt()/10)));
+        QString FFTCommand = QString(CMD_FFT).replace("%FFT_READ_SIZE%", QString::number(ui->comboSampRate->currentText().toInt()/10));
+        qDebug() << "FFTCommand" << FFTCommand;
+        procFFT.start(FFTCommand);
         on_spinFreq_valueChanged(ui->spinFreq->value());
         on_comboDirectSamp_currentIndexChanged(0);
         updateFilterBw();
@@ -210,6 +265,24 @@ void MainWindow::on_toggleRun_toggled(bool checked)
         if(procFFT.pid()!=0)      kill(procFFT.pid(), SIGTERM);
         procFFT.readAll();
         FFTDataBuffer.clear();
+    }
+}
+
+void MainWindow::on_toggleTransmit_toggled(bool checked)
+{
+    if(checked)
+    {
+        QString modCmd = getModulatorCommand();
+        procTX.start(modCmd);
+        procTX.waitForStarted(1000);
+    }
+    else
+    {
+        if(procTX.pid()!=0)
+        {
+            procKillTX.start("bash -c \"gksu touch; sudo killall rpitx\"");
+            kill(procTX.pid(), SIGTERM);
+        }
     }
 }
 

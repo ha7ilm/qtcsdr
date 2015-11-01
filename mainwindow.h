@@ -70,6 +70,8 @@ private slots:
 
     void on_comboDirectSamp_currentIndexChanged(int index);
 
+    void on_toggleTransmit_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
     QList<QPushButton*> modsButtons;
@@ -78,10 +80,14 @@ private:
     QString getDemodulatorCommand();
     void redirectProcessOutput(QProcess &proc, bool onlyStdErr = false);
     void updateFilterBw();
+    QString getNextArgAfter(QString what);
+    QString getModulatorCommand();
     QProcess procDemod;
     QProcess procDistrib;
     QProcess procIQServer;
     QProcess procFFT;
+    QProcess procTX;
+    QProcess procKillTX;
     QString fifoPipePath;
     int fifoPipe;
     QTimer tmrRead;
@@ -89,6 +95,7 @@ private:
     QByteArray FFTDataBuffer;
     QString audioPlayerCommand;
     QString audioRecordCommand;
+    QString alsaDevice;
 };
 
 #endif // MAINWINDOW_H

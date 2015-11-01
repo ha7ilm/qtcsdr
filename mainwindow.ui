@@ -39,7 +39,7 @@
      <widget class="QMySpectrumWidget" name="widgetFFT" native="true"/>
     </item>
     <item>
-     <widget class="QWidget" name="widget" native="true">
+     <widget class="QWidget" name="widgetControls" native="true">
       <property name="minimumSize">
        <size>
         <width>603</width>
@@ -295,6 +295,9 @@
        <property name="text">
         <string>Transmit</string>
        </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
       </widget>
       <widget class="QLabel" name="label_4">
        <property name="geometry">
@@ -319,7 +322,7 @@
         </rect>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <item>
         <property name="text">
@@ -344,6 +347,11 @@
        <item>
         <property name="text">
          <string>960000</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>480000</string>
         </property>
        </item>
        <item>
