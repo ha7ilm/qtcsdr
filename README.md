@@ -40,28 +40,75 @@ A short list of requirements:
 * <a href="http://sdr.osmocom.org/trac/wiki/rtl-sdr">rtl_sdr</a>
 * <a href="https://github.com/simonyiszk/csdr">csdr</a>
 * <a href="https://github.com/ha7ilm/pgroup">pgroup</a>
-* ncat from the *nmap* package
-* mplayer
+* <a href="https://github.com/ha7ilm/rpitx">rpitx</a> if you want to transmit<br />(this is my modified version that will work with **qtcsdr**; the original was written by F5OEO)
+* ncat from the *nmap* package (this will distribute the I/Q signal between processes).
 
 Guide (TBD):
 
-    sudo apt-get install qt5-default qt5-qmake
+    sudo apt-get install nmap qt5-default qt5-qmake git libfftw3-dev
+
+    #Install rpitx, the transmitter
+    git clone https://github.com/ha7ilm/rpitx.git
+    cd rpitx
+    bash install.sh
+    cd ..
     
-	git clone https://github.com/ha7ilm/pgroup.git
+    #Install pgroup
+    git clone https://github.com/ha7ilm/pgroup.git
     cd pgroup
     make && sudo make install
     cd ..
     
+    #Install csdr, the DSP tool
+    git clone https://github.com/simonyiszk/csdr.git
+    cd csdr
+    make && sudo make install
+    cd ..
+    
+    #Install qtcsdr, the GUI
     git clone https://github.com/ha7ilm/qtcsdr.git
     cd qtcsdr
     mkdir build
     cd build
     qmake ..
     make -j4
+    cd ../..
     
-    ./qtcsdr
-    
+    #Install RTL-SDR driver and tools  --  skip if already done
+    sudo apt-get install cmake libusb-1.0-0-dev 
+    git clone https://github.com/keenerd/rtl-sdr
+    cd rtl-sdr/ && mkdir build && cd build
+    cmake ../ -DINSTALL_UDEV_RULES=ON
+    make && sudo make install && sudo ldconfig
+    cd ../..
 
+    #Disable the DVB-T driver, which would prevent the rtl_sdr tool from accessing the stick
+    #(if you want to use it for DVB-T reception later, you should undo this change):
+    sudo bash -c 'echo -e "\n# for RTL-SDR:\nblacklist dvb_usb_rtl28xxu\n" >> /etc/modprobe.d/blacklist.conf'
+    sudo rmmod dvb_usb_rtl28xxu # disable that kernel module for the current session
+
+* Now you should plug the USB audio card and the RTL-SDR into the USB hub connected to the Pi. 
+* Also plug in microphone and headphones to the audio card.
+
+This is the syntax of the **qtcsdr** command is:
+
+    ./qtcsdr --rpitx --alsa <alsa_device_id>
+
+You will need to get the ALSA device ID of your USB audio card.
+
+    aplay -L
+
+You will see multiple entries. For me this one is the correct one for the USB device:
+
+    hw:CARD=Device,DEV=0
+        USB PnP Sound Device, USB Audio
+        Direct hardware device without any conversions
+
+...now we know that our ALSA device is: **hw:CARD=Device,DEV=0**
+
+So that we can run:
+
+    ./qtcsdr --rpitx --alsa hw:CARD=Device,DEV=0
 
 ## Troubleshooting
 
