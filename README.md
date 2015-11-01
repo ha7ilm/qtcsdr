@@ -7,7 +7,7 @@
 ## What you will need to make it work
 * You will need an RTL-SDR dongle which will be the SDR receiver.
 * You will need a Raspberry Pi 2, which will be the SDR transmitter.<br />With the help of the fantastic <a href="rpitx">rpitx project</a>, we can transmit AM/NFM/WFM/LSB/USB on the "GPIO 18" (number 12) pin of the Pi (<a href="http://301o583r8shhildde3s0vcnh.wpengine.netdna-cdn.com/wp-content/uploads/2015/04/Raspberry-Pi-GPIO-compressed.jpg">see pinout over here</a>).
-* You will need **a proper bandpass filter**, see explanation below.<br />Soon you will be able to purchase the QRPi filter+amplifier board that was featured at TAPR DCC 2015, <a href="http://rfsparkling.com/qrpi">see details here.</a> (You can also build your own filter board circuit based on how-tos found on the web.)
+* You will need **a proper bandpass filter for the transmitter output**, see the explanation below.<br />Soon you will be able to purchase the QRPi filter + amplifier board that was featured at TAPR DCC 2015, <a href="http://rfsparkling.com/qrpi">see details here.</a><br />(You can also build your own filter board circuit based on HOWTOs found on the web.)
 * To transmit, you will need an USB audio card, because the Raspberry Pi doesn't have a microphone input. 
 * You may or may not need an external powered USB hub to supply enough current to the audio card and the RTL-SDR.
 
@@ -27,12 +27,12 @@ The Raspberry Pi GPIO 18 is a digital output, which generates square wave signal
 * 28 × 5 = 140 MHz
 * 28 × 7 = 196 MHz
 
-...and actually you may distrub some important radio communication service. Do no do this!
+...and actually you may distrub some important radio communication services. Do not do this!
 
 If you need an SDR transmitter that doesn't generate harmonics like this, then you should buy a proper one, for example the <a href="https://greatscottgadgets.com/hackrf/">HackRF</a>.
 
-Also NEVER EVER transmit or do any tests with your transmitter in the airband (where flights communicate)! 
-(The VHF airband is between 108 MHz and 137MHz.) You have been warned!
+Also NEVER EVER transmit or do any tests with your transmitter in the airband (where flights communicate)! <br />
+The VHF airband is between 108 MHz and 137MHz: never transmit there. You have been warned!
 
 ## How to set it up
 
