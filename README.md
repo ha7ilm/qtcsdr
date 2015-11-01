@@ -40,7 +40,7 @@ A short list of requirements:
 
 * Qt5
 * <a href="http://sdr.osmocom.org/trac/wiki/rtl-sdr">rtl_sdr</a>
-* <a href="https://github.com/simonyiszk/csdr">csdr</a>
+* <a href="https://github.com/simonyiszk/csdr">csdr</a> (dev branch)
 * <a href="https://github.com/ha7ilm/pgroup">pgroup</a>
 * <a href="https://github.com/ha7ilm/rpitx">rpitx</a> - if you want to transmit<br />(it was written by F5OEO, and I modified it to make it work with **qtcsdr**)
 * **ncat** from the **nmap** package (this will distribute the I/Q signal between processes).
@@ -64,6 +64,8 @@ Guide:
     #Install csdr, the DSP tool
     git clone https://github.com/simonyiszk/csdr.git
     cd csdr
+    git fetch
+    git checkout dev
     make && sudo make install
     cd ..
     
