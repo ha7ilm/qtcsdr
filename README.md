@@ -193,3 +193,7 @@ Don't forget to remove the test file from the SD card.
 
     rm ~/test_audio.raw
 
+# Notes
+
+* The transmitted signal is usually more clear if listened to with an external communications receiver rather than the RTL-SDR.
+* Sometimes the RTL-SDR dongle is quite off frequency from the transmission. Switching off the receiver, changing the center frequency a bit and starting the receiver again may help.
