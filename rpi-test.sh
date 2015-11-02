@@ -1,3 +1,4 @@
+#!/bin/bash
 read -r -p "Do you have your RTL-SDR and an USB audio card connected? [y/N] " response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
 then
