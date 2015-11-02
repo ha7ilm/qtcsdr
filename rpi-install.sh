@@ -8,6 +8,8 @@ else
 	exit 0
 fi
 
+REBOOT_LATER=0
+
 mkdir deps
 cd deps
 
@@ -86,7 +88,7 @@ mkdir build
 cd build
 qmake ..
 make -j4
-install -m 0755 qtcsdr /usr/bin
+sudo install -m 0755 qtcsdr /usr/bin
 
 echo
 echo "We're ready."
