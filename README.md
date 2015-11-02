@@ -50,7 +50,7 @@ The easy way is to use the scripts that come with *qtcsdr*:
     ./rpi-install.sh
     ./rpi-test.sh
 
-If *rpi-test.sh* succeeds, it will give display the command line for running *qtcsdr*.
+If *rpi-test.sh* succeeds, it will display the command line for running *qtcsdr*.
 
 ---
 
