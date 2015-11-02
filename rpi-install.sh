@@ -1,3 +1,4 @@
+#!/bin/bash
 echo "This is the qtcsdr install script for Raspbian Jessie."
 read -r -p "It will install qtcsdr along with all of its dependencies. Are you sure? [y/N] " response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
