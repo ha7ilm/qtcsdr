@@ -45,6 +45,8 @@ The VHF airband is between 108 MHz and 137MHz: never transmit there. You have be
 
 The easy way is to use the scripts that come with *qtcsdr*:
 
+    git clone https://github.com/ha7ilm/qtcsdr
+    cd qtcsdr
     ./rpi-install.sh
     ./rpi-test.sh
 
