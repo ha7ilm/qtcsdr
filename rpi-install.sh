@@ -16,7 +16,12 @@ cd deps
 
 echo
 echo "Installing packages..."
+sudo apt-get update
 sudo apt-get install nmap qt5-default qt5-qmake git libfftw3-dev cmake libusb-1.0-0-dev 
+if [ $? -ne 0 ]; then
+	echo "Installing package dependencies failed, please resolve it manually."
+	exit 1
+fi
 
 echo
 echo "Installing pgroup..."
