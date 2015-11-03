@@ -1,5 +1,5 @@
 #!/bin/bash
-read -r -p "Do you have your RTL-SDR and an USB audio card connected? [y/N] " response
+read -r -p "Do you have your RTL-SDR and an USB audio card connected? [y/n] " response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
 then
 	echo "Installing deps..."
@@ -57,7 +57,7 @@ echo "Now we will play back the recorded audio on the headphones output."
 read -r -p "Press any key to continue." response
 cat /tmp/test_audio.raw | aplay -f S16_LE -r48000 -c2 -D $alsadevice
 
-read -r -p "Was the playback okay? [y/N] " response
+read -r -p "Was the playback okay? [y/n] " response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
 then
 	echo
