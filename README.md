@@ -17,7 +17,7 @@ Big thanks to *Evariste, F5OEO* for <a href="https://github.com/F5OEO/rpitx/">rp
 * You will need **a proper low-pass filter for the transmitter output**, see the explanation below.<br />Soon you will be able to purchase the QRPi filter + amplifier board that was featured at TAPR DCC 2015, <a href="http://rfsparkling.com/qrpi">see details here.</a><br />(You can also build your own filter circuit based on HOWTOs found on the web.)
 * To transmit, you will need an USB audio card, because the Raspberry Pi doesn't have a microphone input. 
 * You may or may not need an external powered USB hub to supply enough current to the audio card and the RTL-SDR.
-* As the OS for the Raspberry Pi 2, you will need at least **Raspbian Jessie (09/2015)** as it has the Qt5 packages in its repos (or you will have to manually download Qt5 binaries or build Qt5 from source).
+* As the OS for the Raspberry Pi 2, you will need at least **Raspbian Jessie (09/2015)** as it has the Qt5 packages in its repos (or you would have to manually download Qt5 binaries or build Qt5 from source).
 
 ## Warning
 
