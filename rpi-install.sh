@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "This is the qtcsdr install script for Raspbian Jessie."
-read -r -p "It will install qtcsdr along with all of its dependencies. Are you sure? [y/N] " response
+read -r -p "It will install qtcsdr along with all of its dependencies. Are you sure? [y/n] " response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
 then
 	echo "Installing deps..."
@@ -31,7 +31,7 @@ make && sudo make install
 cd ..
 
 echo
-read -r -p "Can I install rpitx? (Type N to skip.) [y/N] " response
+read -r -p "Can I install rpitx? (Enter N to skip.) [y/n] " response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
 then
 	git clone https://github.com/ha7ilm/rpitx.git
@@ -45,7 +45,7 @@ then
 fi
 
 echo
-read -r -p "Can I install the latest dev branch of csdr? (Type N to skip.) [y/N] " response
+read -r -p "Can I install the latest dev branch of csdr? (Enter N to skip.) [y/n] " response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
 then
 	echo "Installing the dev branch of csdr..." 
@@ -62,7 +62,7 @@ then
 fi
 
 echo
-read -r -p "Can I install rtl-sdr from keenerd's repo? (Type N to skip.) [y/N] " response
+read -r -p "Can I install rtl-sdr from keenerd's repo? (Enter N to skip.) [y/n] " response
 if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
 then
 	git clone https://github.com/keenerd/rtl-sdr
@@ -76,7 +76,7 @@ then
 	cd ../..
 
 	echo
-	read -r -p "Should I blacklist the dvb_usb_rtl28xxu kernel module in order to be able to use rtl-sdr? (Type N to skip.) [y/N] " response
+	read -r -p "Should I blacklist the dvb_usb_rtl28xxu kernel module in order to be able to use rtl-sdr? (Enter N to skip.) [y/n] " response
 	if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
 	then
 		sudo bash -c 'echo -e "\n# for RTL-SDR:\nblacklist dvb_usb_rtl28xxu\n" >> /etc/modprobe.d/blacklist.conf'
