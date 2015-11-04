@@ -53,12 +53,11 @@ The easy way is to use the scripts that come with *qtcsdr*:
 
 If *rpi-test.sh* succeeds, it will display the command line for running *qtcsdr*.
 
-As already mentioned, you will need at least Raspbian Jessie (09/2015) if you want to install *qtcsdr* with *rpi-install.sh*. 
-
 **Notes:**
 
-* If the RTL-SDR dongle started quite off frequency from the transmission, or the transmission was choppy, switching off both the transmitter and the receiver, changing the center frequency a bit and starting the receiver again used to help me.
 * You will definitely need a Raspberry Pi version 2 (Model B) to run *qtcsdr*.<br />I didn't test it on Raspberry Pi version 1, but I'm quite sure that it won't work, as the CPU is not capable of doing this (it has a single-core CPU compared to the quad-core one in the RPi 2).
+* You will need at least Raspbian Jessie (09/2015) if you want to install *qtcsdr* with *rpi-install.sh*. 
+* If the RTL-SDR dongle was quite off frequency from the transmission, or the transmission was choppy, switching off both the transmitter and the receiver, changing the center frequency a bit and starting the receiver again used to help me.
 
 ---
 
