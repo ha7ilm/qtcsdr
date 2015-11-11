@@ -14,7 +14,10 @@ Big thanks to *Evariste, F5OEO* for <a href="https://github.com/F5OEO/rpitx/">rp
 ## What you will need to make it work
 * You will need an RTL-SDR dongle which will be the SDR receiver.
 * You will need a Raspberry Pi 2, which will be the SDR transmitter.<br />With the help of the fantastic <a href="https://github.com/F5OEO/rpitx">rpitx project</a>, we can transmit AM/NFM/WFM/LSB/USB on the "GPIO 18" (number 12) pin of the Pi (<a href="http://301o583r8shhildde3s0vcnh.wpengine.netdna-cdn.com/wp-content/uploads/2015/04/Raspberry-Pi-GPIO-compressed.jpg">see pinout over here</a>).
-* You will need **a proper low-pass filter for the transmitter output**, see the explanation below.<br />Soon you will be able to purchase the QRPi filter + amplifier board that was featured at TAPR DCC 2015, <a href="http://rfsparkling.com/qrpi">see details here.</a><br />(You can also build your own filter circuit based on HOWTOs found on the web.)
+* You will need **a proper band-pass filter for the transmitter output**, see the explanation below.<br />Soon you will be able to purchase the QRPi filter + amplifier board that was featured at TAPR DCC 2015, <a href="http://rfsparkling.com/qrpi">see details here.</a>(You can also build your own filter circuit based on HOWTOs found on the web.)<br /><br/>
+**UPDATE:** We made some more measurements, and we found that although NFM/WFM works as expected, the AM/SSB modes need a much higher level of filtering as the PWM-based amplitude modulation implemented in *rpitx* affects the spectrum even more. Currently work is being done on improving both the software and the hardware.<br /><br />
+
+
 * To transmit, you will need an USB audio card, because the Raspberry Pi doesn't have a microphone input. 
 * You may or may not need an external powered USB hub to supply enough current to the audio card and the RTL-SDR.
 * As the OS for the Raspberry Pi 2, you will need at least **Raspbian Jessie (09/2015)** as it has the Qt5 packages in its repos (or you would have to manually download Qt5 binaries or build Qt5 from source).
@@ -25,9 +28,9 @@ To transmit on ham radio bands, you will need a ham radio license.
 
 Even if you do have a ham radio license:
 
-* Do not transmit on an antenna without using a low-pass filter!
-* Do not transmit on an antenna without using a low-pass filter!
-* Do not transmit on an antenna without using a low-pass filter!
+* Do not transmit on an antenna without using a band-pass filter!
+* Do not transmit on an antenna without using a band-pass filter!
+* Do not transmit on an antenna without using a band-pass filter!
  
 The Raspberry Pi GPIO 18 is a digital output, which generates square wave signals, so that if you transmit on 28 MHz, then you will also transmit on:
 
