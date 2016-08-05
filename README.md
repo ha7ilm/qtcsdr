@@ -208,8 +208,9 @@ Don't forget to remove the test file from the SD card.
 ## How does it work
 
 `qtcsdr` starts a chain of processes:
-* `rpitx` generates the RF signal on the GPIO pin, based on the I/Q signal input,
+* `rpitx` generates the RF signal on the GPIO pin, based on the input I/Q signal,
 * `rtl_sdr` interacts with the receiver hardware, and outputs the I/Q signal,
+* `mplayer`, `arecord` or `aplay` interact with the audio card,
 * `csdr` does the digital signal processing.
 
 ### Processing chain in receive mode 
