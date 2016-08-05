@@ -2,7 +2,7 @@
 
 **qtcsdr** makes a ham transceiver out of your Raspberry Pi 2 and RTL-SDR!
 
-![qtcsdr](/screenshot.png?raw=true)
+![qtcsdr](/images/screenshot.png?raw=true)
 
 Click on the video to see it in action:
 
@@ -204,3 +204,18 @@ You can record something from the microphone input...
 Don't forget to remove the test file from the SD card.
 
     rm ~/test_audio.raw
+
+## How does it work
+
+`qtcsdr` starts a chain of processes:
+* `rpitx` generates the RF signal on the GPIO pin, based on the I/Q signal input,
+* `rtl_sdr` interacts with the receiver hardware, and outputs the I/Q signal,
+* `csdr` does the digital signal processing.
+
+### Processing chain in receive mode 
+  
+![qtcsdr](/images/qtcsdr-rx.png?raw=true)
+
+### Processing chain in transit mode 
+
+![qtcsdr](/images/qtcsdr-tx.png?raw=true)
