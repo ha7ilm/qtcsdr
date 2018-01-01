@@ -11,6 +11,8 @@ fi
 
 REBOOT_LATER=0
 
+git checkout c95ad4778e5b99144ac3fe20c36d6ca1a4793d9d #RPi support is broken on master, which now uses latest csdr
+
 mkdir deps
 cd deps
 
